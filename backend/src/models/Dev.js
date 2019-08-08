@@ -14,6 +14,14 @@ const DevSchema = new Schema({
         type: String,
         required: true,
     },
+    likes: [{ // This part its refering to Dev - relacionando como se fosse uma chave estrangeira
+        type: Schema.Types.ObjectId,
+        ref: 'Dev',
+    }], 
+    dislikes: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Dev',
+    }],
 }, {
     timestamps: true, //Add a createdAt and updatedAt prop at this schema
 });
