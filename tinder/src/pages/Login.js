@@ -4,7 +4,11 @@ import { Container, StyledTextInput, StyledTouchableOpacity, StyledTextLogin } f
 
 import logo from '../assets/logo.png'
 
-function Login() {
+function Login({ navigation } ) {
+    function handleLogin() {
+        navigation.navigate('Main')
+    }
+
     return (
         // this container is a KeyboardAvoidingView, because IOS dont get the view up for keyboard enter (to digit)
         <Container behavior="padding" enabled={Platform.OS === 'ios'}>
@@ -12,7 +16,7 @@ function Login() {
 
             <StyledTextInput placeholder="Use your GitHub user" autoCapitalize="none" autoCorrect={false}/>
 
-            <StyledTouchableOpacity>
+            <StyledTouchableOpacity onPress={handleLogin}>
 
                 <StyledTextLogin>Enter</StyledTextLogin>
 
