@@ -2,6 +2,22 @@ const axios = require('axios');
 const Dev = require('../models/Dev'); // Schema import
 
 module.exports = {
+    async index(req, res) {
+        const { user } = req.headers
+
+        const loggedDev = await Dev.findById(user) // Mongoose method
+
+        const users = await Dev.find({ // Mongoose method
+            $and: [ //$and to apply many filters
+                { _id: { $ne: user } }, //$ne = NOT EQUAL
+                { _id: { $nin: loggedDev.likes } },//$nin = NOT IN some list
+                { _id: { $nin: loggedDev.dislikes } },
+            ]
+        })
+
+        return res.json(users)
+    },
+
     async store(req, res) {
         const { username } = req.body;
 
