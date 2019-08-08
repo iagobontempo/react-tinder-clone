@@ -66,3 +66,10 @@ export const Container = styled.div`
         }
     }
 `;
+
+export const NoUsers = styled.div`
+    font-size: 32px;
+    color: #999;
+    font-weight: bold;
+    margin-top: 300px;
+`

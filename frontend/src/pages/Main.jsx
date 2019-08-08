@@ -1,81 +1,74 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react'; //useEffect calls api when the component is showed on screen
+import { Link } from 'react-router-dom'
+
+import api from '../services/api'
 
 import logo from '../assets/logo.svg'
 import like from '../assets/like.svg'
 import dislike from '../assets/dislike.svg'
 
-import { Container } from './MainStyles';
+import { Container, NoUsers } from './MainStyles';
 
 export default function Main({ match }) {
+  const [users, setUsers] = useState([])
+
+  useEffect(() => {
+    async function loadUsers() {
+      const response = await api.get('/devs', {
+        headers: {
+          user: match.params.id,
+        }
+      })
+
+      setUsers(response.data)
+    }
+    loadUsers()
+  }, [match.params.id])
+
+  async function handleLike(id) {
+    await api.post(`/devs/${id}/likes`, null, { // Second param mus be null, because its used for the body of the request
+      headers: { user: match.params.id },
+    })
+
+    setUsers(users.filter(user => user._id !== id))
+  }
+
+  async function handleDislike(id) {
+    await api.post(`/devs/${id}/dislikes`, null, { // Second param mus be null, because its used for the body of the request
+      headers: { user: match.params.id },
+    })
+
+    setUsers(users.filter(user => user._id !== id))
+  }
+
   return (
     <Container>
-       <img src={logo} alt="logo"/>
-       <ul>
-         <li>
-           <img src="https://avatars0.githubusercontent.com/u/4248081?v=4" alt="avatar"/>
-           <footer>
-             <strong>Filipe Deschamps</strong>
-             <p>Progamador e cantor sertanejo nos tempos livres</p>
-           </footer>
-           <div>
-             <button type="button">
-               <img src={dislike} alt="dislike"/>
-             </button>
-             <button type="button">
-               <img src={like} alt="like"/>
-             </button>
-           </div>
-          </li>
-
-          <li>
-           <img src="https://avatars0.githubusercontent.com/u/4248081?v=4" alt="avatar"/>
-           <footer>
-             <strong>Filipe Deschamps</strong>
-             <p>Progamador e cantor sertanejo nos tempos livres</p>
-           </footer>
-           <div>
-             <button type="button">
-               <img src={dislike} alt="dislike"/>
-             </button>
-             <button type="button">
-               <img src={like} alt="like"/>
-             </button>
-           </div>
-          </li>
-
-          <li>
-           <img src="https://avatars0.githubusercontent.com/u/4248081?v=4" alt="avatar"/>
-           <footer>
-             <strong>Filipe Deschamps</strong>
-             <p>Progamador e cantor sertanejo nos tempos livres</p>
-           </footer>
-           <div>
-             <button type="button">
-               <img src={dislike} alt="dislike"/>
-             </button>
-             <button type="button">
-               <img src={like} alt="like"/>
-             </button>
-           </div>
-          </li>
-
-          <li>
-           <img src="https://avatars0.githubusercontent.com/u/4248081?v=4" alt="avatar"/>
-           <footer>
-             <strong>Filipe Deschamps</strong>
-             <p>Progamador e cantor sertanejo nos tempos livres</p>
-           </footer>
-           <div>
-             <button type="button">
-               <img src={dislike} alt="dislike"/>
-             </button>
-             <button type="button">
-               <img src={like} alt="like"/>
-             </button>
-           </div>
-          </li>
-       </ul>
-        <h1>{match.params.id}</h1>
+      <Link to='/'>
+        <img src={logo} alt="logo" />
+      </Link>
+      {users.length > 0 ? (
+        <ul>
+          {users.map(user => (
+            <li key={user._id}>
+              <img src={user.avatar} alt={user.name} />
+              <footer>
+                <strong>{user.name}</strong>
+                <p>{user.bio}</p>
+              </footer>
+              <div>
+                <button type="button" onClick={() => handleDislike(user._id)}>
+                  <img src={dislike} alt="dislike" />
+                </button>
+                <button type="button" onClick={() => handleLike(user._id)}>
+                  <img src={like} alt="like" />
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+          <NoUsers>Acabou :(</NoUsers>
+        )}
     </Container>
   );
 }
