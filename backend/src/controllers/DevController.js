@@ -5,6 +5,12 @@ module.exports = {
     async store(req, res) {
         const { username } = req.body;
 
+        const userExists = await Dev.findOne({ user: username })  //findOne its a MONGOOSE method
+
+        if (userExists) {
+            return res.json(userExists)
+        }
+
         const response = await axios.get(`https://api.github.com/users/${username}`)
         // console.log(response.data); // Axios always returns the response inside a .data (prop)
 
