@@ -1,12 +1,13 @@
 import React from 'react';
-import { View, Text } from 'react-native'; 
 // div = View 
 import { Container } from './styles'
+
+import Login from './pages/Login'
 
 function App() {
   return (
     <Container>
-      <Text>Hello!</Text>
+      <Login />
     </Container>
   );
 };
