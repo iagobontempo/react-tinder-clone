@@ -1,5 +1,7 @@
 import { createAppContainer, createSwitchNavigator } from 'react-navigation'
 //createDrawerNavigator, createBottomTabNavigator, createMaterialTopTabNavigator
+//createStackNavigator
+
 
 import Login from './pages/Login'
 import Main from './pages/Main'
