@@ -12,7 +12,7 @@ import { Container, NoUsers, MatchAvatar, MatchContainer } from './MainStyles';
 
 export default function Main({ match }) {
   const [users, setUsers] = useState([])
-  const [matchDev, setMatchDev] = useState(true) ;
+  const [matchDev, setMatchDev] = useState(null) ;
 
   useEffect(() => {
     async function loadUsers() {
@@ -33,7 +33,7 @@ export default function Main({ match }) {
     });
 
     socket.on('match', dev => {
-      console.log(dev)
+      setMatchDev(dev); //after doing this. matchDev its avalible to use his params
     })
   
   }, [match.params.id])
@@ -86,9 +86,9 @@ export default function Main({ match }) {
         { matchDev && (
           <MatchContainer>
             <h1>Its a match!</h1>
-            <MatchAvatar src="https://avatars3.githubusercontent.com/u/49655265?s=460" alt=""/>
-            <strong>Iago Bontempo</strong>
-            <p>Bio blablablba, mas muitos mais blas, pra que mais blas </p>
+            <MatchAvatar src={matchDev.avatar} alt=""/>
+            <strong>{matchDev.name}</strong>
+            <p>{matchDev.bio}</p>
             <button onClick={() => setMatchDev(null)}>Close</button>
           </MatchContainer>
         )}
