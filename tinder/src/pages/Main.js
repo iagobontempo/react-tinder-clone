@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import io from 'socket.io-client'
 import AsyncStorage from '@react-native-community/async-storage'
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 
@@ -8,11 +9,12 @@ import logo from '../assets/logo.png'
 import like from '../assets/like.png'
 import dislike from '../assets/dislike.png'
 
-import { Container, CardContainer, Card, CardImage, CardFooter, NameText, BioText, Logo, ButtonContainer, ActionButton, NoUser } from './mainStyles';
+import { Container, CardContainer, Card, CardImage, CardFooter, NameText, BioText, Logo, ButtonContainer, ActionButton, NoUser, MatchContainer, MatchAvatar, MatchName, MatchBio, MatchCloseButton, MatchCloseText, MatchText } from './mainStyles';
 
 export default function Main({ navigation }) {
   const id = navigation.getParam('user')
   const [users, setUsers] = useState([])
+  const [matchDev, setMatchDev] = useState(null)
 
   useEffect(() => {
     async function loadUsers() {
@@ -25,6 +27,17 @@ export default function Main({ navigation }) {
       setUsers(response.data)
     }
     loadUsers()
+  }, [id])
+
+  useEffect(() => {
+    const socket = io('http://localhost:3333', {
+      query: { user: id }
+    });
+
+    socket.on('match', dev => {
+      setMatchDev(dev); //after doing this. matchDev its avalible to use his params
+    })
+  
   }, [id])
 
   async function handleLike() {
@@ -80,6 +93,18 @@ export default function Main({ navigation }) {
             <Image source={like} />
           </ActionButton>
         </ButtonContainer>
+      )}
+
+      { matchDev && (
+        <MatchContainer>
+          <MatchText>ITS A MATCH!</MatchText>
+          <MatchAvatar source={ { uri: matchDev.avatar } } />
+          <MatchName>{matchDev.name}</MatchName>
+          <MatchBio>{matchDev.bio}</MatchBio>
+          <MatchCloseButton onPress={() => setMatchDev(null)}>
+            <MatchCloseText>CLOSE</MatchCloseText>
+          </MatchCloseButton>
+        </MatchContainer>
       )}
     </Container>
   );

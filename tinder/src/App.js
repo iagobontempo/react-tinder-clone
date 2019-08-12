@@ -1,6 +1,10 @@
 import React from 'react';
-// div = View 
+import { YellowBox } from 'react-native'
 import { Container } from './styles'
+
+YellowBox.ignoreWarnings([
+  'Unrecognized WebSocket'
+])
 
 import Routes from './routes'
 
