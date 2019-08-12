@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'; //useEffect calls api when the component is showed on screen
 import { Link } from 'react-router-dom'
+import io from 'socket.io-client'
 
 import api from '../services/api'
 
@@ -7,10 +8,11 @@ import logo from '../assets/logo.svg'
 import like from '../assets/like.svg'
 import dislike from '../assets/dislike.svg'
 
-import { Container, NoUsers } from './MainStyles';
+import { Container, NoUsers, MatchAvatar, MatchContainer } from './MainStyles';
 
 export default function Main({ match }) {
   const [users, setUsers] = useState([])
+  const [matchDev, setMatchDev] = useState(true) ;
 
   useEffect(() => {
     async function loadUsers() {
@@ -23,6 +25,17 @@ export default function Main({ match }) {
       setUsers(response.data)
     }
     loadUsers()
+  }, [match.params.id])
+
+  useEffect(() => {
+    const socket = io('http://localhost:3333', {
+      query: { user: match.params.id }
+    });
+
+    socket.on('match', dev => {
+      console.log(dev)
+    })
+  
   }, [match.params.id])
 
   async function handleLike(id) {
@@ -68,6 +81,16 @@ export default function Main({ match }) {
         </ul>
       ) : (
           <NoUsers>Acabou :(</NoUsers>
+        )}
+
+        { matchDev && (
+          <MatchContainer>
+            <h1>Its a match!</h1>
+            <MatchAvatar src="https://avatars3.githubusercontent.com/u/49655265?s=460" alt=""/>
+            <strong>Iago Bontempo</strong>
+            <p>Bio blablablba, mas muitos mais blas, pra que mais blas </p>
+            <button onClick={() => setMatchDev(null)}>Close</button>
+          </MatchContainer>
         )}
     </Container>
   );
